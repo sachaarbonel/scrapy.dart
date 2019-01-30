@@ -1,37 +1,16 @@
 import '../lib/scrapy.dart';
 import 'package:dio/dio.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart';
 
 class BlogSpider extends Spider {
-  @override
-  void set name(String _name) {
-    super.name = _name;
-  }
+  Stream<String> Parse(Response response) async* {
+    var document = parse(response.data.toString());
+    var nodes = document.querySelectorAll("div.quote> span.text");
 
-  @override
-  void set start_urls(List<String> _start_urls) {
-    super.start_urls = _start_urls;
-  }
-
-  @override
-  String get name => super.name;
-
-  @override
-  List<String> get start_urls => super.start_urls;
-
-  Future<List<Response>> start_requests() async {
-    List<Response> responses = <Response>[];
-    await for (Response response in Requests) {
-      responses.add(response);
+    for (var node in nodes) {
+      yield node.innerHtml;
     }
-    return responses;
-  }
-
-  Future<List<Response>> start_requests2() async {
-    List<Response> responses = <Response>[];
-    await for (Response response in Requests2) {
-      responses.add(response);
-    }
-    return responses;
   }
 }
 
@@ -44,25 +23,10 @@ main() async {
     "http://quotes.toscrape.com/page/3/"
   ];
 
-  // Stopwatch stopw2 = new Stopwatch()..start();
-  // await spider
-  //     .start_requests2()
-  //     .then((List<Response> val) => val.forEach((Response r) {
-  //           //print(r.data.toString());
-  //           r.data.toString();
-  //         }));
-  // stopw2.stop();
-  // var elapsed2 = stopw2.elapsed;
+  Stopwatch stopw2 = new Stopwatch()..start();
+  await spider.start_requests();
+  print(await spider.cache);
+  var elapsed2 = stopw2.elapsed;
 
-  // print("requests2 $elapsed2");
-
-  // Stopwatch stopw1 = new Stopwatch()..start();
-  // await spider
-  //     .start_requests()
-  //     .then((List<Response> val) => val.forEach((Response res) {
-  //           res.data.toString();
-  //         }));
-  // stopw1.stop();
-  // var elapsed1 = stopw1.elapsed;
-  // print('start_requests1() executed in ${elapsed1}');
+  print("requests2 $elapsed2");
 }
