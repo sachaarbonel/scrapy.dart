@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 
 typedef FutureResponse(params);
@@ -15,7 +14,9 @@ abstract class Spider {
 
   Stream<Response> get Requests async* {
     for (var url in start_urls) {
-      yield await Request(url);
+      yield await Request(url).then((Response response) {
+        return Parse(response);
+      });
     }
   }
 
@@ -25,5 +26,10 @@ abstract class Spider {
       responses.add(response);
     }
     return responses;
+  }
+
+  Response Parse(Response response) {
+    print(response);
+    return response;
   }
 }

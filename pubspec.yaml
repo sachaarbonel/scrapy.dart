@@ -9,3 +9,4 @@ sdk: ">=2.0.0-dev.28.0 <3.0.0"
 
 dependencies:
   dio: ^1.0.14
+  html: ^0.13.3

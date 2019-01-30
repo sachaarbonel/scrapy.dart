@@ -1,5 +1,7 @@
 import '../lib/scrapy.dart';
 import 'package:dio/dio.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart';
 
 class BlogSpider extends Spider {
   @override
@@ -17,6 +19,15 @@ class BlogSpider extends Spider {
 
   @override
   List<String> get start_urls => super.start_urls;
+
+  @override
+  Response Parse(Response response) {
+    var document = parse(response.data.toString());
+    var nodes = document.querySelectorAll("div.quote> span.text");
+    nodes.forEach((Element e) {
+      print(e.innerHtml);
+    });
+  }
 }
 
 main() {
@@ -28,11 +39,7 @@ main() {
     "http://quotes.toscrape.com/page/3/"
   ];
   Stopwatch stopw1 = new Stopwatch()..start();
-  spider
-      .start_requests()
-      .then((List<Response> val) => val.forEach((Response res) {
-            res.data.toString();
-          }));
+  spider.start_requests();
 
   var elapsed1 = stopw1.elapsed;
   print('start_requests() executed in ${elapsed1}');
