@@ -7,7 +7,13 @@ abstract class Spider {
   List<String> start_urls;
   Spider({this.name, this.start_urls});
 
-  Future<Response> Request(List<String> start_urls) {
-    return Dio().get(start_urls[0]);
+  Future<Response> Request(url) {
+    return Dio().get(url);
+  }
+
+  Stream<Response> get Requests async* {
+    for (var url in start_urls) {
+      yield await Request(url);
+    }
   }
 }

@@ -18,10 +18,18 @@ class BlogSpider extends Spider {
   @override
   List<String> get start_urls => super.start_urls;
 
-  Future<String> start_requests() async {
-    Response response;
-    response = await Request(start_urls);
-    return response.data.toString();
+  // Future<String> start_requests() async {
+  //   Response response;
+  //   response = await Request(start_urls);
+  //   return response.data.toString();
+  // }
+
+  Future<List<String>> start_requests() async {
+    List<String> responses = [];
+    await for (Response response in Requests) {
+      responses.add(response.data.toString());
+    }
+    return responses;
   }
 }
 
@@ -29,5 +37,6 @@ main() {
   BlogSpider spider = BlogSpider();
   spider.name = "myspider";
   spider.start_urls = ["http://quotes.toscrape.com/page/1/"];
-  spider.start_requests().then((String val) => print(val));
+  spider.start_requests().then((List<String> val) => print(val));
+  //spider.start_requests();
 }
