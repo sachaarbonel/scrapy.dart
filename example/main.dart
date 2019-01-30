@@ -1,8 +1,9 @@
 import '../lib/scrapy.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
+import './items.dart';
 
-class BlogSpider extends Spider {
+class BlogSpider extends Spider<Quote> {
   Stream<String> Parse(Response response) async* {
     var document = parse(response.data.toString());
     var nodes = document.querySelectorAll("div.quote> span.text");
@@ -19,6 +20,14 @@ class BlogSpider extends Spider {
       yield transformed.substring(1, parsed.length - 1);
     }
   }
+
+  @override
+  Stream<Quote> Save(Stream<String> stream) async* {
+    await for (String transformed in stream) {
+      Quote quote = Quote(quote: transformed);
+      yield quote;
+    }
+  }
 }
 
 main() async {
@@ -31,7 +40,7 @@ main() async {
   ];
 
   Stopwatch stopw2 = new Stopwatch()..start();
-  spider.cache = <String>[];
+  spider.cache = <Quote>[];
   await spider.start_requests();
   print(await spider.cache);
   var elapsed2 = stopw2.elapsed;
