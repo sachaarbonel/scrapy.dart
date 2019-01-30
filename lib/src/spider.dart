@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 typedef FutureResponse(params);
 
 abstract class Spider {
+  List<String> responses = <String>[];
   String name;
   List<String> start_urls;
   Spider({this.name, this.start_urls});
@@ -12,24 +13,17 @@ abstract class Spider {
     return Dio().get(url);
   }
 
-  Stream<Response> get Requests async* {
+  Stream<String> get Requests async* {
     for (var url in start_urls) {
-      yield await Request(url).then((Response response) {
-        return Parse(response);
-      });
+      yield* await Parse(await Request(url));
     }
   }
 
-  Future<List<Response>> start_requests() async {
-    List<Response> responses = <Response>[];
-    await for (Response response in Requests) {
+  void start_requests() async {
+    await for (String response in Requests) {
       responses.add(response);
     }
-    return responses;
   }
 
-  Response Parse(Response response) {
-    print(response);
-    return response;
-  }
+  Stream<String> Parse(Response response) {}
 }

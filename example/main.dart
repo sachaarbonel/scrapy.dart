@@ -20,17 +20,18 @@ class BlogSpider extends Spider {
   @override
   List<String> get start_urls => super.start_urls;
 
-  @override
-  Response Parse(Response response) {
+  Stream<String> Parse(Response response) async* {
     var document = parse(response.data.toString());
     var nodes = document.querySelectorAll("div.quote> span.text");
-    nodes.forEach((Element e) {
-      print(e.innerHtml);
-    });
+
+    for (var node in nodes) {
+      yield node.innerHtml;
+    }
   }
 }
 
-main() {
+main() async {
+  Stopwatch stopw1 = new Stopwatch()..start();
   BlogSpider spider = BlogSpider();
   spider.name = "myspider";
   spider.start_urls = [
@@ -38,9 +39,9 @@ main() {
     "http://quotes.toscrape.com/page/2/",
     "http://quotes.toscrape.com/page/3/"
   ];
-  Stopwatch stopw1 = new Stopwatch()..start();
-  spider.start_requests();
 
+  await spider.start_requests();
+  print(await spider.responses);
   var elapsed1 = stopw1.elapsed;
   print('start_requests() executed in ${elapsed1}');
   stopw1.stop();
