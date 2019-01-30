@@ -17,20 +17,6 @@ class BlogSpider extends Spider {
 
   @override
   List<String> get start_urls => super.start_urls;
-
-  Future<List<Response>> start_requests() async {
-    List<Response> responses = <Response>[];
-    await for (Response response in Requests) {
-      responses.add(response);
-    }
-    return responses;
-  }
-
-  Future<List<Response>> start_requests2() async {
-    List<Response> responses;
-    responses = await Requests2();
-    return responses;
-  }
 }
 
 main() {
@@ -49,18 +35,6 @@ main() {
           }));
 
   var elapsed1 = stopw1.elapsed;
-  //print('start_requests1() executed in ${stopw1.elapsed}');
+  print('start_requests() executed in ${elapsed1}');
   stopw1.stop();
-
-  Stopwatch stopw2 = new Stopwatch()..start();
-  spider
-      .start_requests2()
-      .then((List<Response> val) => val.forEach((Response r) {
-            //print(r.data.toString());
-            r.data.toString();
-          }));
-  var elapsed2 = stopw2.elapsed;
-  //print('start_requests2() executed in ${stopw2.elapsed}');
-  stopw2.stop();
-  print("requests2 $elapsed2, requests1 $elapsed1");
 }
