@@ -1,0 +1,11 @@
+name: scrapy
+description: The goal of this package is to port python scrapy to dart
+version: 0.0.1
+author: Sacha Arbonel <sacha.arbonel@hotmail.fr>
+#homepage: 
+
+environment:
+sdk: ">=2.0.0-dev.28.0 <3.0.0"
+
+dependencies:
+  dio: ^1.0.14
