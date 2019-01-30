@@ -20,7 +20,7 @@ abstract class Spider {
     }
     List<Response> results = await Future.wait(listOfFutures);
     for (var result in results) {
-      yield* await Parse(result);
+      yield* await Transform(Parse(result));
     }
   }
 
@@ -31,4 +31,6 @@ abstract class Spider {
   }
 
   Stream<String> Parse(Response result) {}
+
+  Stream<String> Transform(Stream<String> result) {}
 }

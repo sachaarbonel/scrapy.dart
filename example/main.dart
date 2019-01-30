@@ -11,6 +11,14 @@ class BlogSpider extends Spider {
       yield node.innerHtml;
     }
   }
+
+  @override
+  Stream<String> Transform(Stream<String> stream) async* {
+    await for (String parsed in stream) {
+      var transformed = parsed;
+      yield transformed.substring(1, parsed.length - 1);
+    }
+  }
 }
 
 main() async {
