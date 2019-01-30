@@ -27,13 +27,15 @@ class BlogSpider extends Spider {
   }
 
   Future<List<Response>> start_requests2() async {
-    List<Response> responses;
-    responses = await Requests2();
+    List<Response> responses = <Response>[];
+    await for (Response response in Requests2) {
+      responses.add(response);
+    }
     return responses;
   }
 }
 
-main() {
+main() async {
   BlogSpider spider = BlogSpider();
   spider.name = "myspider";
   spider.start_urls = [
@@ -41,26 +43,26 @@ main() {
     "http://quotes.toscrape.com/page/2/",
     "http://quotes.toscrape.com/page/3/"
   ];
-  Stopwatch stopw1 = new Stopwatch()..start();
-  spider
-      .start_requests()
-      .then((List<Response> val) => val.forEach((Response res) {
-            res.data.toString();
-          }));
 
-  var elapsed1 = stopw1.elapsed;
-  //print('start_requests1() executed in ${stopw1.elapsed}');
-  stopw1.stop();
+  // Stopwatch stopw2 = new Stopwatch()..start();
+  // await spider
+  //     .start_requests2()
+  //     .then((List<Response> val) => val.forEach((Response r) {
+  //           //print(r.data.toString());
+  //           r.data.toString();
+  //         }));
+  // stopw2.stop();
+  // var elapsed2 = stopw2.elapsed;
 
-  Stopwatch stopw2 = new Stopwatch()..start();
-  spider
-      .start_requests2()
-      .then((List<Response> val) => val.forEach((Response r) {
-            //print(r.data.toString());
-            r.data.toString();
-          }));
-  var elapsed2 = stopw2.elapsed;
-  //print('start_requests2() executed in ${stopw2.elapsed}');
-  stopw2.stop();
-  print("requests2 $elapsed2, requests1 $elapsed1");
+  // print("requests2 $elapsed2");
+
+  // Stopwatch stopw1 = new Stopwatch()..start();
+  // await spider
+  //     .start_requests()
+  //     .then((List<Response> val) => val.forEach((Response res) {
+  //           res.data.toString();
+  //         }));
+  // stopw1.stop();
+  // var elapsed1 = stopw1.elapsed;
+  // print('start_requests1() executed in ${elapsed1}');
 }

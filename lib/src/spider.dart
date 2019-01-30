@@ -16,4 +16,16 @@ abstract class Spider {
       yield await Request(url);
     }
   }
+
+  Stream<Response> get Requests2 async* {
+    Dio dio = Dio();
+    var listOfFutures = <Future>[];
+    for (var url in start_urls) {
+      listOfFutures.add(dio.get(url));
+    }
+    var results = await Future.wait(listOfFutures);
+    for (var result in results) {
+      yield await result;
+    }
+  }
 }
