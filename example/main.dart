@@ -2,6 +2,8 @@ import '../lib/scrapy.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
 import './items.dart';
+import 'dart:io' show File;
+import 'dart:convert';
 
 class BlogSpider extends Spider<Quote> {
   Stream<String> Parse(Response response) async* {
@@ -42,7 +44,9 @@ main() async {
   Stopwatch stopw2 = new Stopwatch()..start();
   spider.cache = <Quote>[];
   await spider.start_requests();
-  print(await spider.cache);
+  List<Quote> cache = await spider.cache;
+  Quotes quotes = Quotes(quotes: cache);
+  await File('data.json').writeAsString(jsonEncode(quotes));
   var elapsed2 = stopw2.elapsed;
 
   print("requests2 $elapsed2");
