@@ -5,11 +5,12 @@ import 'dart:convert';
 import 'items.dart';
 
 abstract class Spider<T extends Item, U extends Items> {
+  List<Future<Response>> futures = <Future<Response>>[];
   String name;
   List<T> cache;
   U items;
   List<String> start_urls;
-  Spider({this.name, this.start_urls, this.cache}){
+  Spider({this.name, this.start_urls, this.cache}) {
     cache = <T>[];
   }
 
@@ -19,7 +20,7 @@ abstract class Spider<T extends Item, U extends Items> {
 
   Stream<T> get Requests async* {
     Dio dio = Dio();
-    List<Future<Response>> futures = <Future<Response>>[];
+
     for (var url in start_urls) {
       futures.add(dio.get(url));
     }
@@ -35,8 +36,8 @@ abstract class Spider<T extends Item, U extends Items> {
     }
   }
 
-  void save_result() async{
-    Items items = new Items(items : cache);
+  void save_result() async {
+    Items items = new Items(items: cache);
     await File('data.json').writeAsString(jsonEncode(items));
   }
 
