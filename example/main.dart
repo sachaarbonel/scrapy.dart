@@ -42,7 +42,7 @@ main() async {
   ];
 
   Stopwatch stopw2 = new Stopwatch()..start();
-  spider.cache = <Quote>[];
+  
   await spider.start_requests();
   List<Quote> cache = await spider.cache;
   Quotes quotes = Quotes(quotes: cache);

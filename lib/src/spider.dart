@@ -6,7 +6,9 @@ abstract class Spider<T> {
   String name;
   List<T> cache;
   List<String> start_urls;
-  Spider({this.name, this.start_urls, this.cache});
+  Spider({this.name, this.start_urls, this.cache}){
+    cache = <T>[];
+  }
 
   Future<Response> Request(url) {
     return Dio().get(url);
