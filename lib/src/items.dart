@@ -1,4 +1,3 @@
-
 class Items<T extends Item> extends Object {
   List<T> items;
   Items({this.items});
@@ -12,7 +11,6 @@ class Items<T extends Item> extends Object {
     return {"items": result};
   }
 }
-
 
 abstract class Item extends Object {
   Map<String, dynamic> toJson();

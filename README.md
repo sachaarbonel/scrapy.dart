@@ -1,4 +1,5 @@
-# scrapy
+# scrapy  
+[scrapy](./packages/scrapy/) | [![pub package](https://img.shields.io/pub/v/scrapy.svg)](https://pub.dartlang.org/packages/scrapy)
 
 Scrapy, a fast high-level web crawling & scraping framework for dart. 
 
@@ -6,10 +7,29 @@ Scrapy, a fast high-level web crawling & scraping framework for dart.
 ## Getting started
 
 ```dart
-import '../lib/scrapy.dart';
+import 'package:scrapy/scrapy.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
-import './items.dart';
+
+class Quote extends Item {
+  String quote;
+  Quote({this.quote});
+  @override
+  String toString() {
+    return "Quote : { quote : $quote }";
+  }
+
+  Map<String, dynamic> toJson() => {
+        "quote": quote == null ? null : quote,
+      };
+}
+
+class Quotes<Quote> extends Items {
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson();
+  }
+}
 
 class BlogSpider extends Spider<Quote,Quotes> {
   Stream<String> Parse(Response response) async* {
@@ -55,8 +75,10 @@ main() async {
 
   print("the program took $elapsed"); //the program took 0:00:00.279733
 }
+
 ```
 
 ## TODOs
+- [ ] tests
 - [ ]  [link extractors](https://docs.scrapy.org/en/latest/topics/link-extractors.html)
 - [ ] [download files](https://docs.scrapy.org/en/latest/topics/media-pipeline.html)
