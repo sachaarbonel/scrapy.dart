@@ -1,6 +1,6 @@
 name: scrapy
 description: A dart port of the idiomatic python library Scrapy, that provides a fast high-level web crawling & scraping framework for dart. 
-version: 0.0.2-1
+version: 0.0.2
 author: Sacha Arbonel <sacha.arbonel@hotmail.fr>
 homepage: https://github.com/Sach97/scrapy.dart
 environment:

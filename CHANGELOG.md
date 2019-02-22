@@ -1,3 +1,7 @@
+## 0.0.2
+
+* Badge
+
 ## 0.0.2-1
 
 * Updated README and increas score on pub
