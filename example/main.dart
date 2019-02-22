@@ -1,7 +1,7 @@
-import '../lib/scrapy.dart';
+import 'package:scrapy/scrapy.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
-import './items.dart';
+import 'items.dart';
 
 class BlogSpider extends Spider<Quote, Quotes> {
   Stream<String> Parse(Response response) async* {

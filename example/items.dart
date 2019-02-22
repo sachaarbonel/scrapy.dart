@@ -1,4 +1,4 @@
-import '../lib/src/items.dart';
+import 'package:scrapy/scrapy.dart';
 
 class Quote extends Item {
   String quote;
@@ -14,7 +14,6 @@ class Quote extends Item {
 }
 
 class Quotes<Quote> extends Items {
-
   @override
   Map<String, dynamic> toJson() {
     return super.toJson();
