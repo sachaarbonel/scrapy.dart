@@ -1,2 +1,2 @@
 # scrapy
-A dart port of scrappy
+An in progress dart port of scrappy
