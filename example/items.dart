@@ -1,4 +1,6 @@
-class Quote extends Object {
+import '../lib/src/items.dart';
+
+class Quote extends Item {
   String quote;
   Quote({this.quote});
   @override
@@ -11,16 +13,10 @@ class Quote extends Object {
       };
 }
 
-class Quotes extends Object {
-  List<Quote> quotes;
+class Quotes<Quote> extends Items {
 
-  Quotes({this.quotes});
+  @override
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> result = <Map<String, dynamic>>[];
-    quotes.forEach((Quote quote) {
-      result.add(quote.toJson());
-    });
-
-    return {"quotes": result};
+    return super.toJson();
   }
 }

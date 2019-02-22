@@ -2,10 +2,8 @@ import '../lib/scrapy.dart';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
 import './items.dart';
-import 'dart:io' show File;
-import 'dart:convert';
 
-class BlogSpider extends Spider<Quote> {
+class BlogSpider extends Spider<Quote,Quotes> {
   Stream<String> Parse(Response response) async* {
     var document = parse(response.data.toString());
     var nodes = document.querySelectorAll("div.quote> span.text");
@@ -41,13 +39,11 @@ main() async {
     "http://quotes.toscrape.com/page/9/"
   ];
 
-  Stopwatch stopw2 = new Stopwatch()..start();
+  Stopwatch stopw = new Stopwatch()..start();
   
   await spider.start_requests();
-  List<Quote> cache = await spider.cache;
-  Quotes quotes = Quotes(quotes: cache);
-  await File('data.json').writeAsString(jsonEncode(quotes));
-  var elapsed2 = stopw2.elapsed;
+  await spider.save_result();
+  var elapsed = stopw.elapsed;
 
-  print("requests2 $elapsed2");
+  print("the program took $elapsed");
 }

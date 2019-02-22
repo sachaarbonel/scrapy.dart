@@ -1,10 +1,13 @@
 import 'dart:async';
-
+import 'dart:io' show File;
 import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'items.dart';
 
-abstract class Spider<T> {
+abstract class Spider<T extends Item, U extends Items> {
   String name;
   List<T> cache;
+  U items;
   List<String> start_urls;
   Spider({this.name, this.start_urls, this.cache}){
     cache = <T>[];
@@ -16,11 +19,11 @@ abstract class Spider<T> {
 
   Stream<T> get Requests async* {
     Dio dio = Dio();
-    List<Future<Response>> listOfFutures = <Future<Response>>[];
+    List<Future<Response>> futures = <Future<Response>>[];
     for (var url in start_urls) {
-      listOfFutures.add(dio.get(url));
+      futures.add(dio.get(url));
     }
-    List<Response> results = await Future.wait(listOfFutures);
+    List<Response> results = await Future.wait(futures);
     for (var result in results) {
       yield* await Save(Transform(Parse(result)));
     }
@@ -30,6 +33,11 @@ abstract class Spider<T> {
     await for (T response in Requests) {
       cache.add(response);
     }
+  }
+
+  void save_result() async{
+    Items items = new Items(items : cache);
+    await File('data.json').writeAsString(jsonEncode(items));
   }
 
   Stream<String> Parse(Response result) async* {}
