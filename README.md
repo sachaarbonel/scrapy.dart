@@ -1,5 +1,6 @@
 # scrapy  
-[scrapy](./packages/scrapy/) | [![pub package](https://img.shields.io/pub/v/scrapy.svg)](https://pub.dartlang.org/packages/scrapy)
+
+[![pub package](https://img.shields.io/pub/v/scrapy.svg)](https://pub.dartlang.org/packages/scrapy)
 
 Scrapy, a fast high-level web crawling & scraping framework for dart. 
 
