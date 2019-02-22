@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:html/parser.dart' show parse;
 import './items.dart';
 
-class BlogSpider extends Spider<Quote,Quotes> {
+class BlogSpider extends Spider<Quote, Quotes> {
   Stream<String> Parse(Response response) async* {
     var document = parse(response.data.toString());
     var nodes = document.querySelectorAll("div.quote> span.text");
@@ -40,7 +40,7 @@ main() async {
   ];
 
   Stopwatch stopw = new Stopwatch()..start();
-  
+
   await spider.start_requests();
   await spider.save_result();
   var elapsed = stopw.elapsed;

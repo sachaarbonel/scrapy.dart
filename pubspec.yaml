@@ -1,11 +1,13 @@
 name: scrapy
-description: The goal of this package is to port python scrapy to dart
+description: Scrapy, a fast high-level web crawling & scraping framework for dart, ported from python. 
 version: 0.0.1
 author: Sacha Arbonel <sacha.arbonel@hotmail.fr>
-#homepage: 
-
+homepage: https://github.com/Sach97/scrapy.dart
+documentation: https://pub.dartlang.org/documentation/scrapy/latest/
 environment:
-sdk: ">=2.0.0-dev.28.0 <3.0.0"
+ sdk: '>=2.0.0 <3.0.0'
 
 dependencies:
   dio: ^1.0.14
+dev_dependencies:
+  html: ^0.13.3
