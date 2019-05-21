@@ -1,7 +1,8 @@
-import 'package:scrapy/scrapy.dart';
 import 'package:dio/dio.dart';
-import 'package:html/parser.dart' show parse;
-import 'items.dart';
+import 'package:html/parser.dart';
+import 'package:scrapy/scrapy.dart';
+
+import 'model.dart';
 
 class BlogSpider extends Spider<Quote, Quotes> {
   Stream<String> Parse(Response response) async* {
@@ -28,22 +29,4 @@ class BlogSpider extends Spider<Quote, Quotes> {
       yield quote;
     }
   }
-}
-
-main() async {
-  BlogSpider spider = BlogSpider();
-  spider.name = "myspider";
-  spider.start_urls = [
-    "http://quotes.toscrape.com/page/7/",
-    "http://quotes.toscrape.com/page/8/",
-    "http://quotes.toscrape.com/page/9/"
-  ];
-
-  Stopwatch stopw = new Stopwatch()..start();
-
-  await spider.start_requests();
-  await spider.save_result();
-  var elapsed = stopw.elapsed;
-
-  print("the program took $elapsed");
 }

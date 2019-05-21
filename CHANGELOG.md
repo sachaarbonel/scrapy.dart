@@ -1,3 +1,6 @@
+## 0.0.3
+* Adding path parameter. Support for flutter.
+
 ## 0.0.2
 
 * Badge

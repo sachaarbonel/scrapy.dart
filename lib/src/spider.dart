@@ -9,6 +9,7 @@ abstract class Spider<T extends Item, U extends Items> {
   String name;
   List<T> cache;
   U items;
+  String path;
   List<String> start_urls;
   Spider({this.name, this.start_urls, this.cache}) {
     cache = <T>[];
@@ -38,7 +39,7 @@ abstract class Spider<T extends Item, U extends Items> {
 
   void save_result() async {
     Items items = new Items(items: cache);
-    await File('data.json').writeAsString(jsonEncode(items));
+    await File(path).writeAsString(jsonEncode(items));
   }
 
   Stream<String> Parse(Response result) async* {}
