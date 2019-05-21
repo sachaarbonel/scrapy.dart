@@ -1,4 +1,4 @@
-package com.example.scrapy_example;
+package com.example.example;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
