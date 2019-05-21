@@ -1,111 +1,184 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:scrapy/scrapy.dart';
+import 'package:html/parser.dart' show parse;
 
-void main() => runApp(MyApp());
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  return directory.path;
+}
+
+Future<File> get _localFile async {
+  final path = await _localPath;
+  return File('$path/data.json');
+}
+
+void main() async {
+  BlogSpider spider = BlogSpider();
+  spider.name = "myspider";
+   var path =await _localPath;
+    spider.path ="$path/data.json";
+  spider.start_urls = [
+    "http://quotes.toscrape.com/page/7/",
+    "http://quotes.toscrape.com/page/8/",
+    "http://quotes.toscrape.com/page/9/"
+  ];
+
+  Stopwatch stopw = new Stopwatch()..start();
+
+  await spider.start_requests();
+  await spider.save_result();
+  var elapsed = stopw.elapsed;
+
+  print("the program took $elapsed");
+  File file = await _localFile;
+  String contents = await file.readAsString();
+  print(contents);
+
+  runApp(
+    MaterialApp(
+      title: 'Reading and Writing Files',
+      home: FlutterDemo(),
+      //home: FlutterDemo(storage: CounterStorage()),
+    ),
+  );
+}
+
+class Quote extends Item {
+  String quote;
+  Quote({this.quote});
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  String toString() {
+    return "Quote : { quote : $quote }";
+  }
+
+  Map<String, dynamic> toJson() => {
+        "quote": quote == null ? null : quote,
+      };
+}
+
+class Quotes<Quote> extends Items {
+  @override
+  Map<String, dynamic> toJson() {
+    return super.toJson();
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class BlogSpider extends Spider<Quote, Quotes> {
+  Stream<String> Parse(Response response) async* {
+    var document = parse(response.data.toString());
+    var nodes = document.querySelectorAll("div.quote> span.text");
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    for (var node in nodes) {
+      yield node.innerHtml;
+    }
   }
 
   @override
+  Stream<String> Transform(Stream<String> stream) async* {
+    await for (String parsed in stream) {
+      var transformed = parsed;
+      yield transformed.substring(1, parsed.length - 1);
+    }
+  }
+
+  @override
+  Stream<Quote> Save(Stream<String> stream) async* {
+    await for (String transformed in stream) {
+      Quote quote = Quote(quote: transformed);
+      yield quote;
+    }
+  }
+}
+
+// class CounterStorage {
+//   Future<String> get _localPath async {
+//     final directory = await getApplicationDocumentsDirectory();
+
+//     return directory.path;
+//   }
+
+//   Future<File> get _localFile async {
+//     final path = await _localPath;
+//     return File('$path/counter.txt');
+//   }
+
+//   Future<int> readCounter() async {
+//     try {
+//       final file = await _localFile;
+
+//       // Read the file
+//       String contents = await file.readAsString();
+
+//       return int.parse(contents);
+//     } catch (e) {
+//       // If encountering an error, return 0
+//       return 0;
+//     }
+//   }
+
+//   Future<File> writeCounter(int counter) async {
+//     final file = await _localFile;
+
+//     // Write the file
+//     return file.writeAsString('$counter');
+//   }
+// }
+
+class FlutterDemo extends StatefulWidget {
+  //final CounterStorage storage;
+
+  //FlutterDemo({Key key, @required this.storage}) : super(key: key);
+
+  @override
+  _FlutterDemoState createState() => _FlutterDemoState();
+}
+
+class _FlutterDemoState extends State<FlutterDemo> {
+  int _counter;
+
+  @override
+  void initState() {
+    super.initState();
+    // widget.storage.readCounter().then((int value) {
+    //   setState(() {
+    //     _counter = value;
+    //   });
+    // });
+  }
+
+  // Future<File> _incrementCounter() {
+  //   setState(() {
+  //     _counter++;
+  //   });
+
+  //   // Write the variable as a string to the file.
+  //   return widget.storage.writeCounter(_counter);
+  // }
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text('Scrapy on flutter')),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+        child: Text(
+          'Click on button',
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: (){ 
+          print("pressing button");
+        },
+        tooltip:
+            'Launch scrapy to populate the screen with dummy scrapped data',
+        child: Icon(Icons.launch),
+      ),
     );
   }
 }
