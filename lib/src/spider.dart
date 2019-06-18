@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'dart:io' show File;
-import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'dart:io' show File;
+
+import 'package:dio/dio.dart';
+
 import 'items.dart';
 
 abstract class Spider<T extends Item, U extends Items> {
@@ -10,41 +12,41 @@ abstract class Spider<T extends Item, U extends Items> {
   List<T> cache;
   U items;
   String path;
-  List<String> start_urls;
-  Spider({this.name, this.start_urls, this.cache}) {
+  List<String> startUrls;
+  Spider({this.name, this.startUrls, this.cache}) {
     cache = <T>[];
   }
 
-  Future<Response> Request(url) {
+  Future<Response> request(url) {
     return Dio().get(url);
   }
 
-  Stream<T> get Requests async* {
-    Dio dio = Dio();
+  Stream<T> get requests async* {
+    final dio = Dio();
 
-    for (var url in start_urls) {
+    for (var url in startUrls) {
       futures.add(dio.get(url));
     }
-    List<Response> results = await Future.wait(futures);
+    final results = await Future.wait(futures);
     for (var result in results) {
-      yield* await Save(Transform(Parse(result)));
+      yield* await save(transform(parse(result)));
     }
   }
 
-  void start_requests() async {
-    await for (T response in Requests) {
+  Future<void> startRequests() async {
+    await for (T response in requests) {
       cache.add(response);
     }
   }
 
-  void save_result() async {
-    Items items = new Items(items: cache);
-    await File(path).writeAsString(jsonEncode(items));
+  Future<void> saveResult() async {
+    final items = Items(items: cache);
+    await File(path).writeAsString(json.encode(items));
   }
 
-  Stream<String> Parse(Response result) async* {}
+  Stream<String> parse(Response result) async* {}
 
-  Stream<String> Transform(Stream<String> parsed) async* {}
+  Stream<String> transform(Stream<String> parsed) async* {}
 
-  Stream<T> Save(Stream<String> transformed) async* {}
+  Stream<T> save(Stream<String> transformed) async* {}
 }

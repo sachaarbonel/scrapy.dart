@@ -3,7 +3,7 @@ class Items<T extends Item> extends Object {
   Items({this.items});
 
   Map<String, dynamic> toJson() {
-    List<Map<String, dynamic>> result = <Map<String, dynamic>>[];
+    final result = <Map<String, dynamic>>[];
     items.forEach((T item) {
       result.add(item.toJson());
     });
