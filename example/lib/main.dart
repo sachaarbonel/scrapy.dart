@@ -1,6 +1,6 @@
-import 'package:example/model.dart';
-import 'package:example/spider.dart';
-import 'package:example/storage.dart';
+import './model.dart';
+import './spider.dart';
+import './storage.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -9,7 +9,7 @@ void main() async {
   QuoteStorage storage = QuoteStorage();
   var path = await storage.localPath;
   spider.path = "$path/data.json";
-  spider.start_urls = [
+  spider.startUrls = [
     "http://quotes.toscrape.com/page/7/",
     "http://quotes.toscrape.com/page/8/",
     "http://quotes.toscrape.com/page/9/"
@@ -17,8 +17,8 @@ void main() async {
 
   Stopwatch stopw = new Stopwatch()..start();
 
-  await spider.start_requests();
-  await spider.save_result();
+  await spider.startRequests();
+  await spider.saveResult();
   var elapsed = stopw.elapsed;
 
   print("the program took $elapsed");
