@@ -48,7 +48,7 @@ linter:
     # - avoid_positional_boolean_parameters # not yet tested
     # - avoid_private_typedef_functions # we prefer having typedef (discussion in https://github.com/flutter/flutter/pull/16356)
     - avoid_relative_lib_imports
-    - avoid_renaming_method_parameters
+    #- avoid_renaming_method_parameters
     - avoid_return_types_on_setters
     # - avoid_returning_null # we do this commonly
     # - avoid_returning_this # https://github.com/dart-lang/linter/issues/842
@@ -85,7 +85,7 @@ linter:
     # - omit_local_variable_types # opposite of always_specify_types
     # - one_member_abstracts # too many false positives
     # - only_throw_errors # https://github.com/flutter/flutter/issues/5792
-    - overridden_fields
+    #- overridden_fields
     - package_api_docs
     - package_names
     - package_prefixed_library_names
