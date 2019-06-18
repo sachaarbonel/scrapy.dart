@@ -2,15 +2,15 @@
 
 [![pub package](https://img.shields.io/pub/v/scrapy.svg)](https://pub.dartlang.org/packages/scrapy)
 
-Scrapy, a fast high-level web crawling & scraping framework for dart. 
+Scrapy, a fast high-level web crawling & scraping framework for dart and Flutter 
 
 
 ## Getting started
 
 ```dart
 import 'package:scrapy/scrapy.dart';
-import 'package:dio/dio.dart';
-import 'package:html/parser.dart' show parse;
+import 'package:html/parser.dart' as html;
+import 'package:http/http.dart';
 
 class Quote extends Item {
   String quote;
@@ -20,22 +20,35 @@ class Quote extends Item {
     return "Quote : { quote : $quote }";
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         "quote": quote == null ? null : quote,
       };
+  factory Quote.fromJson(String str) => Quote.fromMap(json.decode(str));
+  factory Quote.fromMap(Map<String, dynamic> json) => Quote(
+        quote: json["quote"] == null ? null : json["quote"],
+      );
 }
 
-class Quotes<Quote> extends Items {
+class Quotes extends Items {
   @override
-  Map<String, dynamic> toJson() {
-    return super.toJson();
-  }
+  final List<Quote> items;
+  Quotes({
+    this.items,
+  });
+
+  factory Quotes.fromJson(String str) => Quotes.fromMap(json.decode(str));
+  factory Quotes.fromMap(Map<String, dynamic> json) => Quotes(
+        items: json["items"] == null
+            ? null
+            : List<Quote>.from(json["items"].map((x) => Quote.fromMap(x))),
+      );
 }
 
 class BlogSpider extends Spider<Quote,Quotes> {
-  Stream<String> Parse(Response response) async* {
-    var document = parse(response.data.toString());
-    var nodes = document.querySelectorAll("div.quote> span.text");
+  Stream<String> parse(Response response) async* {
+    final document = html.parse(response.body);
+    final nodes = document.querySelectorAll("div.quote> span.text");
 
     for (var node in nodes) {
       yield node.innerHtml;
@@ -45,7 +58,7 @@ class BlogSpider extends Spider<Quote,Quotes> {
   @override
   Stream<String> Transform(Stream<String> stream) async* {
     await for (String parsed in stream) {
-      var transformed = parsed;
+      final transformed = parsed;
       yield transformed.substring(1, parsed.length - 1);
     }
   }
@@ -53,31 +66,41 @@ class BlogSpider extends Spider<Quote,Quotes> {
   @override
   Stream<Quote> Save(Stream<String> stream) async* {
     await for (String transformed in stream) {
-      Quote quote = Quote(quote: transformed);
+      final quote = Quote(quote: transformed);
       yield quote;
     }
   }
 }
 
 main() async {
-  BlogSpider spider = BlogSpider();
+  final spider = BlogSpider();
   spider.name = "myspider";
-  spider.start_urls = [
+  spider.client = Client();
+  spider.startUrls = [
     "http://quotes.toscrape.com/page/7/",
     "http://quotes.toscrape.com/page/8/",
     "http://quotes.toscrape.com/page/9/"
   ];
 
-  Stopwatch stopw = new Stopwatch()..start();
+  final stopw = Stopwatch()..start();
   
-  await spider.start_requests();
-  await spider.save_result();
-  var elapsed = stopw.elapsed;
+  await spider.startRequests();
+  await spider.saveResult();
+  final elapsed = stopw.elapsed;
 
   print("the program took $elapsed"); //the program took 0:00:00.279733
 }
 
 ```
+
+### Example
+
+Here a list view example on flutter showing the quotes we just scrapped and save on disk.
+
+![screencap.png](screencap.png)
+
+## Lightweight dependencies:
+  - http
 
 ## TODOs
 - [ ] tests

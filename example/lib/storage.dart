@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'model.dart';
+
 class QuoteStorage {
   Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -14,9 +16,9 @@ class QuoteStorage {
     return File('$path/data.json');
   }
 
-  Future<String> getQuotes() async {
-    File file = await _localFile;
-    String contents = await file.readAsString();
-    return contents;
+  Future<Quotes> getQuotes() async {
+    final file = await _localFile;
+    final contents = await file.readAsString();
+    return Quotes.fromJson(contents);
   }
 }

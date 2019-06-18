@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show File;
 
-import 'package:dio/dio.dart';
+import 'package:http/http.dart';
 
 import 'items.dart';
 
@@ -10,24 +10,20 @@ abstract class Spider<T extends Item, U extends Items> {
   List<Future<Response>> futures = <Future<Response>>[];
   String name;
   List<T> cache;
+  Client client;
   U items;
   String path;
   List<String> startUrls;
-  Spider({this.name, this.startUrls, this.cache}) {
+  Spider({this.name, this.startUrls, this.cache, this.client}) {
     cache = <T>[];
   }
 
   Future<Response> request(url) {
-    return Dio().get(url);
+    return client.get(url);
   }
 
   Stream<T> get requests async* {
-    final dio = Dio();
-
-    for (var url in startUrls) {
-      futures.add(dio.get(url));
-    }
-    final results = await Future.wait(futures);
+    final results = await Future.wait(startUrls.map((url) => client.get(url)));
     for (var result in results) {
       yield* await save(transform(parse(result)));
     }

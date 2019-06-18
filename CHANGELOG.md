@@ -1,5 +1,8 @@
 ## 0.0.3
-* Adding path parameter. Support for flutter.
+* Adding path parameter
+* Support for flutter
+* Cleaner code, thus breaking change on non camel case functions.
+* Move away from dio http library. The library have only one dependency on http package
 
 ## 0.0.2
 
