@@ -95,7 +95,7 @@ main() async {
 
 ### Example
 
-Here a list view example on flutter showing the quotes we just scrapped and save on disk.
+Here a list view example on flutter showing the quotes we just scrapped and saved on disk.
 
 ![screencap.png](screencap.png)
 
