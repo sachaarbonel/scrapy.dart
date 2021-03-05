@@ -6,6 +6,7 @@ import 'spider.dart';
 import 'storage.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final spider = BlogSpider();
   spider.name = "myspider";
   final storage = QuoteStorage();
