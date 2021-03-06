@@ -1,6 +1,6 @@
 class Items<T extends Item> extends Object {
   List<T> items;
-  Items({this.items});
+  Items({required this.items});
 
   Map<String, dynamic> toJson() {
     final result = <Map<String, dynamic>>[];

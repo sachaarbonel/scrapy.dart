@@ -5,6 +5,28 @@ import 'package:scrapy/scrapy.dart';
 import 'model.dart';
 
 class BlogSpider extends Spider<Quote, Quotes> {
+  BlogSpider({
+    required String path,
+    required List<String> startUrls,
+    required Client client,
+  }) : super(
+          path: path,
+          startUrls: startUrls,
+          client: client,
+        );
+
+  BlogSpider.existingCache({
+    required String path,
+    required List<String> startUrls,
+    required List<Quote> cache,
+    required Client client,
+  }) : super(
+          path: path,
+          startUrls: startUrls,
+          cache: cache,
+          client: client,
+        );
+
   @override
   Stream<String> parse(Response response) async* {
     final document = html.parse(response.body);

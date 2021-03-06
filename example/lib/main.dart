@@ -6,17 +6,22 @@ import 'spider.dart';
 import 'storage.dart';
 
 void main() async {
-  final spider = BlogSpider();
-  spider.name = "myspider";
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final startUrls = <String>[
+    'https://quotes.toscrape.com/page/7/',
+    'https://quotes.toscrape.com/page/8/',
+    'https://quotes.toscrape.com/page/9/'
+  ];
   final storage = QuoteStorage();
   final path = await storage.localPath;
-  spider.path = "$path/data.json";
-  spider.client = Client();
-  spider.startUrls = [
-    "http://quotes.toscrape.com/page/7/",
-    "http://quotes.toscrape.com/page/8/",
-    "http://quotes.toscrape.com/page/9/"
-  ];
+  
+  final spider = BlogSpider(
+    path: '$path/data.json',
+    startUrls: startUrls,
+    client: Client(),
+  );
 
   final stopw = Stopwatch()..start();
 
@@ -39,7 +44,7 @@ void main() async {
 class FlutterDemo extends StatelessWidget {
   final QuoteStorage storage;
 
-  FlutterDemo({Key key, @required this.storage}) : super(key: key);
+  const FlutterDemo({Key? key, required this.storage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +54,17 @@ class FlutterDemo extends StatelessWidget {
         child: FutureBuilder(
             future: storage.getQuotes(),
             builder: (context, AsyncSnapshot<Quotes> snapshot) {
-              return snapshot.hasData
+              final quotes = snapshot.data;
+              return quotes != null
                   ? ListView.builder(
                       itemCount: 10,
                       itemBuilder: (context, index) {
-                        final quotes = snapshot.data;
                         return Card(
-                            child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(quotes.items[index].quote),
-                        ));
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(quotes.items[index].quote),
+                          ),
+                        );
                       },
                     )
                   : const CircularProgressIndicator();
