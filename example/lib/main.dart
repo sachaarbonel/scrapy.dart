@@ -6,6 +6,7 @@ import 'spider.dart';
 import 'storage.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final spider = BlogSpider();
   spider.name = "myspider";
   final storage = QuoteStorage();
@@ -13,9 +14,9 @@ void main() async {
   spider.path = "$path/data.json";
   spider.client = Client();
   spider.startUrls = [
-    "http://quotes.toscrape.com/page/7/",
-    "http://quotes.toscrape.com/page/8/",
-    "http://quotes.toscrape.com/page/9/"
+    "https://quotes.toscrape.com/page/7/",
+    "https://quotes.toscrape.com/page/8/",
+    "https://quotes.toscrape.com/page/9/"
   ];
 
   final stopw = Stopwatch()..start();
