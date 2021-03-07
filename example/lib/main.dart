@@ -6,7 +6,6 @@ import 'spider.dart';
 import 'storage.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   final startUrls = <String>[
